@@ -40,7 +40,7 @@ func (s *Slack) SEND_IT_SEND_IT_SEND_IT(data *strategy.SWOLE_DATA) {
 	text += "GO!"
 
 	msg := &SLACK_MESSAGE{
-		Username: "SWOLEBOT_TEST_TEST_TEST (Golang™ Flavored)",
+		Username: "SWOLEBOT (Golang™ Flavored)",
 		IconUrl: "http://vaks.in/wp-content/uploads/2012/07/e14c.png",
 		Text: text,
 		// Channel: "swole",
