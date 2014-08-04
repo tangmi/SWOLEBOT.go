@@ -12,6 +12,7 @@ import (
 const timeFormat string = "Mon Jan 2 15:04:05 -0700 MST 2006"
 
 func main() {
+
 	fmt.Printf("swolebot server, lol\n")
 
 	tickerChan := time.NewTicker(time.Second).C
@@ -51,26 +52,35 @@ func main() {
 
 func GET_THE_NEXT_HOUR_PRETTY_PLEASE(t time.Time) time.Time {
 	n := t
-
-	// if we're	on a weekend, make it a weekday
-	for n.Weekday() == time.Sunday || n.Weekday() == time.Saturday {
-		n = n.Add(24 * time.Hour)
-
-		// set the time to be 9am on whatever day on the monday we end up on
+	
+	if n.Weekday() == time.Saturday || n.Weekday() == time.Sunday {
+		// if we're on a weekend, push us to the next weekday at 9am
+		n = UGH_WHENS_THE_NEXT_WEEKDAY_I_WANT_TO_WORKOUT(n)
 		n = time.Date(n.Year(), n.Month(), n.Day(), 9, 0, 0, 0, n.Location());
-	}
-
-	if t.Hour() >= 17 || t.Hour() < 9 {
+	} else { // else weekday
 		// if we're not during working hours... set the next event to 9am
-		n = time.Date(n.Year(), n.Month(), n.Day(), 9, 0, 0, 0, n.Location());
-		if t.Hour() >= 17 {
-			// add a day if we're after 5pm
-			n = n.Add(24 * time.Hour)
+		if t.Hour() >= 17 || t.Hour() < 9 {
+			n = time.Date(n.Year(), n.Month(), n.Day(), 9, 0, 0, 0, n.Location());
+			if t.Hour() >= 17 {
+				// add a day if we're after 5pm
+				n = n.Add(24 * time.Hour)
+
+				// if we're	on a weekend, make it the next weekday
+				n = UGH_WHENS_THE_NEXT_WEEKDAY_I_WANT_TO_WORKOUT(n)
+			}
+		} else {
+			// otherwise set it to the next available hour
+			n = t.Truncate(time.Hour).Add(time.Hour)
 		}
-	} else {
-		// otherwise set it to the next available hour
-		n = t.Truncate(time.Hour).Add(time.Hour)
 	}
 
+	return n
+}
+
+func UGH_WHENS_THE_NEXT_WEEKDAY_I_WANT_TO_WORKOUT(t time.Time) time.Time {
+	n := t
+	for n.Weekday() == time.Saturday || n.Weekday() == time.Sunday {
+		n = n.Add(24 * time.Hour)
+	}
 	return n
 }
